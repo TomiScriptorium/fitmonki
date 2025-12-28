@@ -2,20 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     
-    <!-- Metaetiquetas para Web App en iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FitMonki">
 
     <title>FitMonki</title>
     
-    <!-- Favicon (Navegadores) - Monito con fondo redondeado -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%25%22 y1=%22100%25%22 x2=%22100%25%22 y2=%220%25%22><stop offset=%220%25%22 style=%22stop-color:%234ade80%22/><stop offset=%22100%25%22 style=%22stop-color:%2314b8a6%22/></linearGradient></defs><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22url(%23g)%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2265%22 text-anchor=%22middle%22 dy=%22.35em%22>🐵</text></svg>">
-    
-    <!-- Icono Apple Touch (iOS Home Screen) - Cuadrado completo con degradado -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><defs><linearGradient id=%22g%22 x1=%220%25%22 y1=%22100%25%22 x2=%22100%25%22 y2=%220%25%22><stop offset=%220%25%22 style=%22stop-color:%234ade80%22/><stop offset=%22100%25%22 style=%22stop-color:%2314b8a6%22/></linearGradient></defs><rect width=%22512%22 height=%22512%22 fill=%22url(%23g)%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%22320%22 text-anchor=%22middle%22 dy=%22.35em%22>🐵</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐵</text></svg>">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063823.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,30 +38,60 @@
         }
     </script>
     <style>
-        body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+        html, body {
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+        
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .pt-safe { padding-top: env(safe-area-inset-top); }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .nav-item { transition: all 0.3s ease; }
-        .nav-item.active { background-color: rgba(16, 185, 129, 0.1); color: #10B981; }
-        .nav-item.active i { transform: scale(1.1); }
-        .nav-item:active { transform: scale(0.95); }
+        input, select, textarea { font-size: 16px !important; }
+
+        /* --- ANIMACIONES FLUIDAS --- */
         
-        /* Chat Styles */
-        .chat-bubble p { margin-bottom: 0.5rem; line-height: 1.5; }
-        .chat-bubble p:last-child { margin-bottom: 0; }
-        .chat-bubble ul { list-style: none; padding: 0; margin: 0.5rem 0; }
-        .chat-bubble li { position: relative; padding-left: 1.2rem; margin-bottom: 0.25rem; }
-        .chat-bubble li::before { content: '•'; color: #10B981; position: absolute; left: 0; font-weight: bold; }
-        .chat-bubble strong { color: #10B981; font-weight: 600; }
+        /* 1. Transición de Vistas (Evita el parpadeo de recarga) */
+        #app-content {
+            transition: opacity 0.2s ease-out, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 1;
+            transform: scale(1);
+        }
+        .page-hidden {
+            opacity: 0 !important;
+            transform: scale(0.98) !important;
+            pointer-events: none;
+        }
+
+        /* 2. Feedback Táctil (Efecto al presionar cualquier botón) */
+        button, .nav-item, .cursor-pointer, .active-scale {
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, opacity 0.2s ease;
+            cursor: pointer;
+        }
+        button:active, .nav-item:active, .cursor-pointer:active {
+            transform: scale(0.92); /* Se encoge un poco al tocar */
+            opacity: 0.8;
+        }
+
+        /* Estilos específicos de navegación */
+        .nav-item.active { color: #10B981; background-color: rgba(16, 185, 129, 0.08); }
+        .nav-item.active i { transform: scale(1.1); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Markdown & Checkboxes */
+        .prose p { margin-bottom: 0.5rem; }
+        .prose ul { list-style-type: none; padding-left: 0; margin-bottom: 0.5rem; }
+        .prose li { margin-bottom: 0.4rem; padding-left: 1.5rem; position: relative; }
+        .prose li::before { content: '•'; color: #10B981; position: absolute; left: 0; font-weight: bold; }
+        .prose strong { color: #10B981; font-weight: 600; }
+        .task-checkbox:checked + div { text-decoration: line-through; color: #9CA3AF; opacity: 0.7; transition: all 0.3s ease; }
         
-        /* Checkbox bonito para el Plan */
-        .task-checkbox:checked + div { text-decoration: line-through; color: #9CA3AF; opacity: 0.7; }
-        
+        /* Typing Indicator */
         .typing-indicator span {
             display: inline-block; width: 6px; height: 6px; background-color: #10B981;
             border-radius: 50%; margin: 0 1px; animation: typing 1.4s infinite ease-in-out both;
@@ -75,42 +101,41 @@
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-screen flex flex-col overflow-hidden font-sans transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center z-30 pt-safe">
-        <div class="flex items-center gap-2">
-            <div class="bg-gradient-to-tr from-green-400 to-teal-500 text-white w-9 h-9 rounded-xl flex items-center justify-center shadow-md">
-                <!-- Reemplazado el icono roto por un Emoji que siempre funciona -->
-                <span class="text-xl select-none pt-0.5">🐵</span>
+    <header class="absolute top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center z-30 pt-safe h-[60px] sm:h-[70px]">
+        <div class="flex items-center gap-2 active-scale" onclick="router('home')">
+            <div class="bg-gradient-to-tr from-green-400 to-teal-500 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-md">
+                <span class="text-lg select-none pt-0.5">🐵</span>
             </div>
             <h1 class="text-lg font-bold tracking-tight text-gray-800 dark:text-white">Fit<span class="text-brand-primary">Monki</span></h1>
         </div>
         <div class="flex gap-2">
-            <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95">
-                <i class="fa-solid fa-moon dark:hidden text-sm"></i>
-                <i class="fa-solid fa-sun hidden dark:inline text-yellow-400 text-sm"></i>
+            <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-moon dark:hidden text-xs"></i>
+                <i class="fa-solid fa-sun hidden dark:inline text-yellow-400 text-xs"></i>
             </button>
-            <button onclick="showSettingsMenu()" class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95">
-                <i class="fa-solid fa-gear text-sm"></i>
+            <button onclick="showSettingsMenu()" class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-gear text-xs"></i>
             </button>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main id="app-content" class="flex-1 overflow-y-auto p-4 pb-32 no-scrollbar relative scroll-smooth">
+    <main id="app-content" class="absolute top-[60px] sm:top-[70px] bottom-0 w-full overflow-y-auto p-4 pb-32 no-scrollbar scroll-smooth">
         <!-- Contenido dinámico -->
     </main>
 
     <!-- Navigation -->
-    <nav class="fixed bottom-6 left-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl p-2 flex justify-between items-center z-50 pb-safe">
+    <nav class="fixed bottom-6 left-4 right-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl p-2 flex justify-between items-center z-50 pb-safe max-w-md mx-auto">
         <button onclick="router('home')" class="nav-item flex-1 h-12 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-brand-primary" id="nav-home">
             <i class="fa-solid fa-house text-lg"></i>
         </button>
         <button onclick="router('fasting')" class="nav-item flex-1 h-12 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-brand-primary" id="nav-fasting">
             <i class="fa-solid fa-clock text-lg"></i>
         </button>
-        <button onclick="showAddMenu()" class="flex-none bg-brand-primary hover:bg-green-600 text-white w-12 h-12 rounded-xl shadow-lg shadow-green-500/30 flex items-center justify-center mx-2 transition transform active:scale-95">
+        <button onclick="showAddMenu()" class="flex-none bg-brand-primary hover:bg-green-600 text-white w-12 h-12 rounded-xl shadow-lg shadow-green-500/30 flex items-center justify-center mx-2 transform transition-transform">
             <i class="fa-solid fa-plus text-xl"></i>
         </button>
         <button onclick="router('coach')" class="nav-item flex-1 h-12 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-brand-primary" id="nav-coach">
@@ -121,10 +146,9 @@
         </button>
     </nav>
 
-    <!-- Modales (Actividad, Perfil, Config) -->
-    <!-- Actividad -->
-    <div id="add-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transform transition-transform translate-y-full sm:translate-y-0" id="add-content">
+    <!-- Modales -->
+    <div id="add-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0" id="add-content">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold dark:text-white">Registrar Actividad</h3>
                 <button onclick="closeModal('add-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
@@ -155,14 +179,14 @@
                     <button type="button" onclick="selectIntensity('Alta')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Alta">Alta</button>
                 </div>
                 <input type="hidden" id="activity-intensity" value="Media">
-                <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg active:scale-95 transition">Guardar</button>
+                <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg transition">Guardar</button>
             </form>
         </div>
     </div>
 
     <!-- Perfil -->
-    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-sm">
-        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transform transition-transform translate-y-full sm:translate-y-0 h-[85vh] sm:h-auto overflow-y-auto no-scrollbar" id="profile-content">
+    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0 h-[85dvh] overflow-y-auto no-scrollbar" id="profile-content">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold dark:text-white">Tu Perfil</h3>
                 <button onclick="closeModal('profile-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
@@ -183,20 +207,20 @@
                             <i class="fa-solid fa-calculator mr-1"></i> Rango ideal: <b id="ideal-weight-range">--</b> kg.
                         </p>
                     </div>
-                    <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2">Actualizar Datos</button>
+                    <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 transition">Actualizar Datos</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Configuración -->
-    <div id="settings-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl" id="settings-content">
+    <div id="settings-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="settings-content">
             <h3 class="text-lg font-bold mb-4 dark:text-white">Configuración</h3>
             <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Gemini API Key</label>
             <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl mb-3">
                 <p class="text-xs text-blue-800 dark:text-blue-200 mb-2">
-                    Si te da error, crea una clave nueva.
+                    Si te da error 403, crea una clave nueva.
                 </p>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1">
                     Obtener API Key Gratis <i class="fa-solid fa-external-link-alt"></i>
@@ -204,9 +228,39 @@
             </div>
             <input type="password" id="settings-api-key" class="input-field mb-4 font-mono text-xs" placeholder="Pega tu API Key aquí...">
             <div class="flex gap-2">
-                <button onclick="closeModal('settings-modal')" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-sm font-medium dark:text-white">Cancelar</button>
-                <button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-brand-primary text-white text-sm font-bold shadow-lg">Guardar</button>
+                <button onclick="closeModal('settings-modal')" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-sm font-medium dark:text-white transition">Cancelar</button>
+                <button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-brand-primary text-white text-sm font-bold shadow-lg transition">Guardar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Selector de Ayuno -->
+    <div id="fasting-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0" id="fasting-content">
+            <h3 class="text-lg font-bold dark:text-white mb-4">Elige tu Protocolo</h3>
+            <div class="space-y-2 max-h-[60vh] overflow-y-auto no-scrollbar">
+                <button onclick="setFastingProtocol(12)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition">
+                    <div class="font-bold text-brand-primary">12:12 (Principiante)</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Ventana suave para empezar.</div>
+                </button>
+                <button onclick="setFastingProtocol(14)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition">
+                    <div class="font-bold text-brand-primary">14:10 (Intermedio)</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Un pequeño reto más.</div>
+                </button>
+                <button onclick="setFastingProtocol(16)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition">
+                    <div class="font-bold text-brand-primary">16:8 (Lean Gains)</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">El estándar de oro para perder grasa.</div>
+                </button>
+                <button onclick="setFastingProtocol(18)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition">
+                    <div class="font-bold text-brand-primary">18:6 (Guerrero)</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Para usuarios avanzados.</div>
+                </button>
+                <button onclick="setFastingProtocol(20)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition">
+                    <div class="font-bold text-brand-primary">20:4 (Intenso)</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Solo 4 horas para comer.</div>
+                </button>
+            </div>
+            <button onclick="closeModal('fasting-modal')" class="mt-4 w-full py-3 text-sm font-bold text-gray-500 transition">Cancelar</button>
         </div>
     </div>
 
@@ -218,22 +272,61 @@
             activities: [],
             goals: [],
             activePlan: null, 
-            fasting: { isActive: false, startTime: null },
-            chatHistory: [] // Nuevo: Guardar chat
+            fasting: { isActive: false, startTime: null, protocol: 16, history: [] }, 
+            chatHistory: [] 
         };
         let appData = JSON.parse(localStorage.getItem('fitmonki_data')) || defaultState;
-        if (!appData.weightHistory) appData.weightHistory = [{date: new Date().toISOString(), weight: appData.user.weight}];
-        if (!appData.chatHistory) appData.chatHistory = []; // Migración para usuarios antiguos
+        
+        // --- AUTO-REPARACIÓN DE DATOS ---
+        if (!appData.weightHistory || appData.weightHistory.length === 0) {
+            appData.weightHistory = [{date: new Date().toISOString(), weight: appData.user.weight || 0}];
+        }
+        if (!appData.chatHistory) appData.chatHistory = []; 
+        if (!appData.fasting) appData.fasting = defaultState.fasting;
+        if (!appData.fasting.protocol) appData.fasting.protocol = 16;
+        if (!appData.fasting.history) appData.fasting.history = [];
 
         const getApiKey = () => localStorage.getItem('fitmonki_apikey') || "";
         const save = () => localStorage.setItem('fitmonki_data', JSON.stringify(appData));
+
+        // --- ANIMATED ROUTER (CLAVE PARA LA FLUIDEZ) ---
+        async function router(view) {
+            const content = document.getElementById('app-content');
+            
+            // 1. Fade Out
+            content.classList.add('page-hidden');
+            
+            // 2. Esperar animación (muy rápido para no sentir lag, pero suficiente para el efecto)
+            await new Promise(r => setTimeout(r, 150));
+
+            // 3. Update Nav
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navEl = document.getElementById(`nav-${view}`);
+            if(navEl) navEl.classList.add('active');
+
+            // 4. Render
+            content.innerHTML = '';
+            if (view === 'home') renderHome(content);
+            else if (view === 'fasting') renderFasting(content);
+            else if (view === 'coach') renderCoach(content);
+            else if (view === 'plan') renderPlan(content);
+
+            // 5. Fade In (Trigger reflow)
+            void content.offsetWidth;
+            content.classList.remove('page-hidden');
+        }
 
         // --- CHART JS ---
         let weightChartInstance = null;
         function initChart() {
             const ctx = document.getElementById('weightChart');
             if (!ctx) return;
-            const history = appData.weightHistory.slice().sort((a,b) => new Date(a.date) - new Date(b.date));
+            let history = appData.weightHistory.slice().sort((a,b) => new Date(a.date) - new Date(b.date));
+            if(history.length === 1) {
+                const prevDate = new Date(history[0].date);
+                prevDate.setDate(prevDate.getDate() - 1);
+                history.unshift({ date: prevDate.toISOString(), weight: history[0].weight });
+            }
             const labels = history.map(h => new Date(h.date).toLocaleDateString('es-ES', {day:'numeric', month:'short'}));
             const dataPoints = history.map(h => h.weight);
             if (weightChartInstance) weightChartInstance.destroy();
@@ -246,31 +339,31 @@
                         borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#10B981', pointRadius: 4, tension: 0.4, fill: true
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { display: false }, ticks: { color: '#9CA3AF' } }, x: { grid: { display: false }, ticks: { color: '#9CA3AF' } } } }
+                options: { animation: { duration: 1000, easing: 'easeOutQuart' }, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { display: false }, ticks: { color: '#9CA3AF' } }, x: { grid: { display: false }, ticks: { color: '#9CA3AF' } } } }
             });
-        }
-
-        // --- ENRUTAMIENTO ---
-        function router(view) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const navEl = document.getElementById(`nav-${view}`);
-            if(navEl) navEl.classList.add('active');
-            const content = document.getElementById('app-content');
-            content.innerHTML = ''; 
-            
-            if (view === 'home') renderHome(content);
-            else if (view === 'fasting') renderFasting(content);
-            else if (view === 'coach') renderCoach(content);
-            else if (view === 'plan') renderPlan(content);
         }
 
         // --- VISTAS ---
         function renderHome(container) {
-            const lastWeight = appData.weightHistory.length > 1 ? appData.weightHistory[appData.weightHistory.length-2].weight : appData.user.weight;
-            const diff = (appData.user.weight - lastWeight).toFixed(1);
-            
+            if (!appData.weightHistory || appData.weightHistory.length === 0) {
+                appData.weightHistory = [{date: new Date().toISOString(), weight: appData.user.weight || 0}];
+            }
+            const lastEntry = appData.weightHistory[appData.weightHistory.length-1];
+            const lastWeight = lastEntry ? lastEntry.weight : 0;
+            let diff = 0;
+            if(appData.weightHistory.length > 1) {
+                const prevEntry = appData.weightHistory[appData.weightHistory.length-2];
+                if (prevEntry) diff = (lastWeight - prevEntry.weight).toFixed(1);
+            }
+            let fastLabel = "Inactivo";
+            let fastColor = "text-gray-500";
+            if (appData.fasting.isActive) {
+                fastLabel = "En Ayuno";
+                fastColor = "text-green-500 animate-pulse";
+            }
+
             container.innerHTML = `
-                <div class="fade-in">
+                <div class="pb-20">
                     <div class="flex justify-between items-end mb-6">
                         <div>
                             <p class="text-xs text-gray-400 font-medium">HOLA DE NUEVO</p>
@@ -280,22 +373,25 @@
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
                         <div class="flex justify-between items-center mb-4">
-                            <div><p class="text-xs text-gray-400 uppercase">Peso Actual</p><h3 class="text-2xl font-bold dark:text-white">${appData.user.weight} kg</h3></div>
+                            <div><p class="text-xs text-gray-400 uppercase">Peso Actual</p><h3 class="text-2xl font-bold dark:text-white">${lastWeight} kg</h3></div>
                             <div class="text-right"><span class="text-xs font-bold ${diff<=0?'text-green-500':'text-red-500'} bg-gray-50 dark:bg-gray-900 px-2 py-1 rounded-lg">${diff<=0?'▼':'▲'} ${Math.abs(diff)} kg</span></div>
                         </div>
                         <div class="h-40 w-full relative"><canvas id="weightChart"></canvas></div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4 mb-20">
-                         <div onclick="router('fasting')" class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-2xl border border-purple-100 dark:border-purple-800 cursor-pointer active:scale-95 transition">
-                            <i class="fa-solid fa-clock text-purple-500 text-xl mb-2"></i>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Ayuno 16:8</p>
-                            <h4 class="font-bold dark:text-white">${appData.fasting.isActive ? 'Activo' : 'Inactivo'}</h4>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                         <div onclick="router('fasting')" class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-2xl border border-purple-100 dark:border-purple-800 cursor-pointer transition">
+                            <div class="flex justify-between items-start mb-2">
+                                <i class="fa-solid fa-clock text-purple-500 text-xl"></i>
+                                <span class="text-[10px] font-bold bg-white dark:bg-black/20 px-1.5 py-0.5 rounded text-purple-400">${appData.fasting.protocol}:00</span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Estado Ayuno</p>
+                            <h4 class="font-bold dark:text-white ${fastColor}">${fastLabel}</h4>
                         </div>
-                        <div onclick="router('plan')" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800 cursor-pointer active:scale-95 transition">
+                        <div onclick="router('plan')" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800 cursor-pointer transition">
                             <i class="fa-solid fa-list-check text-blue-500 text-xl mb-2"></i>
                             <p class="text-xs text-gray-500 dark:text-gray-400">Mi Plan</p>
-                            <h4 class="font-bold dark:text-white">${appData.activePlan ? 'En curso' : 'Sin plan'}</h4>
+                            <h4 class="font-bold dark:text-white truncate">${appData.activePlan ? 'En curso' : 'Sin plan'}</h4>
                         </div>
                     </div>
                 </div>`;
@@ -305,62 +401,96 @@
         function renderFasting(container) {
             const isFasting = appData.fasting.isActive;
             const statusText = isFasting ? "EN AYUNO" : "COMIDA";
+            const protocol = appData.fasting.protocol;
+            let historyHTML = '';
+            if (appData.fasting.history && appData.fasting.history.length > 0) {
+                historyHTML = appData.fasting.history.slice(0, 5).map(f => {
+                    const durationHrs = (f.duration / 3600000).toFixed(1);
+                    const dateStr = new Date(f.date).toLocaleDateString('es-ES', {weekday:'short', day:'numeric'});
+                    return `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                            <span class="text-xs text-gray-600 dark:text-gray-300 capitalize">${dateStr}</span>
+                        </div>
+                        <span class="text-xs font-bold dark:text-white">${durationHrs}h</span>
+                    </div>`;
+                }).join('');
+            } else {
+                historyHTML = '<p class="text-xs text-gray-400 text-center py-2">Sin historial aún</p>';
+            }
+            const radius = 110;
+            const circumference = 2 * Math.PI * radius;
+
             container.innerHTML = `
-                <div class="fade-in flex flex-col h-full pt-4 items-center">
-                    <h2 class="text-2xl font-bold dark:text-white mb-2">Ayuno 16:8</h2>
-                    <div class="relative w-64 h-64 flex items-center justify-center mb-8 mt-8">
-                         <div class="absolute inset-0 rounded-full border-[16px] border-gray-200 dark:border-gray-700"></div>
-                         <div class="absolute inset-0 rounded-full border-[16px] border-brand-primary border-t-transparent ${isFasting ? '' : 'hidden'}" style="transform: rotate(-90deg);"></div>
+                <div class="flex flex-col h-full pt-2 pb-24">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold dark:text-white">Ayuno</h2>
+                        <button onclick="showFastingOptions()" class="text-xs font-bold bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 text-brand-primary flex items-center gap-1 transition">
+                            <i class="fa-solid fa-sliders"></i> ${protocol}:00
+                        </button>
+                    </div>
+
+                    <div class="relative w-64 h-64 flex items-center justify-center mb-8 mx-auto">
+                         <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 256 256">
+                            <circle cx="128" cy="128" r="${radius}" fill="none" stroke="currentColor" stroke-width="16" class="text-gray-100 dark:text-gray-800" />
+                            <circle id="fast-progress-circle" cx="128" cy="128" r="${radius}" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" 
+                                stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" 
+                                class="text-brand-primary transition-all duration-1000 ease-linear ${isFasting ? '' : 'hidden'}" />
+                         </svg>
                          <div class="text-center z-10 flex flex-col items-center">
-                            <span class="text-xs font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full mb-2">${statusText}</span>
-                            <h1 class="text-5xl font-bold text-gray-800 dark:text-white tabular-nums" id="fast-timer">--:--:--</h1>
+                            <span class="text-[10px] font-bold bg-green-100 text-green-800 px-2 py-0.5 rounded-full mb-1 tracking-wide">${statusText}</span>
+                            <h1 class="text-5xl font-bold text-gray-800 dark:text-white tabular-nums tracking-tighter" id="fast-timer">--:--</h1>
+                            <p class="text-xs text-gray-400 mt-1" id="fast-sub">Listo para empezar</p>
                          </div>
                     </div>
-                    <button onclick="toggleFasting()" class="w-full max-w-xs py-4 rounded-2xl font-bold text-lg shadow-xl active:scale-95 transition ${isFasting ? 'bg-red-50 text-red-500' : 'bg-brand-primary text-white'}">
-                        ${isFasting ? 'Terminar (Comer)' : 'Iniciar (Ayuno)'}
+
+                    <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+                        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase">Inicio</p>
+                            <p class="font-bold dark:text-white" id="fast-start">--:--</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase">Meta Fin</p>
+                            <p class="font-bold dark:text-white" id="fast-end">--:--</p>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleFasting()" class="w-full py-4 rounded-xl font-bold text-lg shadow-lg transition transform mb-8 ${isFasting ? 'bg-red-50 text-red-500 border border-red-100' : 'bg-brand-primary text-white'}">
+                        ${isFasting ? 'Terminar Ayuno' : 'Iniciar Ayuno'}
                     </button>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Historial Reciente</h4>
+                        ${historyHTML}
+                    </div>
                 </div>`;
-            if (isFasting) startTimerTicker();
+            
+            if (isFasting) {
+                const start = new Date(appData.fasting.startTime);
+                const target = new Date(start.getTime() + (protocol * 60 * 60 * 1000));
+                document.getElementById('fast-start').innerText = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                document.getElementById('fast-end').innerText = target.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                startTimerTicker();
+            } else {
+                const now = new Date();
+                const target = new Date(now.getTime() + (protocol * 60 * 60 * 1000));
+                document.getElementById('fast-end').innerText = target.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
         }
 
         function renderCoach(container) {
-            // Generar HTML del historial
             let chatHTML = '';
             if (appData.chatHistory && appData.chatHistory.length > 0) {
                 chatHTML = appData.chatHistory.map(msg => {
-                    if (msg.role === 'user') {
-                        return `<div class="bg-brand-primary text-white p-3 rounded-xl rounded-tr-none self-end max-w-[90%] mb-3 text-sm ml-auto block w-fit shadow-sm">${msg.text}</div>`;
-                    } else {
-                        return `<div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl rounded-tl-none self-start max-w-[95%] mb-3 shadow-sm">${msg.html}</div>`;
-                    }
+                    if (msg.role === 'user') return `<div class="bg-brand-primary text-white p-3 rounded-xl rounded-tr-none self-end max-w-[90%] mb-3 text-sm ml-auto block w-fit shadow-sm">${msg.text}</div>`;
+                    else return `<div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl rounded-tl-none self-start max-w-[95%] mb-3 shadow-sm">${msg.html}</div>`;
                 }).join('');
             } else {
-                chatHTML = `<div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl rounded-tl-none self-start max-w-[90%] mb-3"><p class="text-sm text-gray-800 dark:text-gray-200">Dime qué necesitas. Si pides un plan, te daré una lista. Si preguntas algo, seré breve.</p></div>`;
+                chatHTML = `<div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl rounded-tl-none self-start max-w-[90%] mb-3"><p class="text-sm text-gray-800 dark:text-gray-200">Dime qué necesitas. Si pides un plan, te daré una lista.</p></div>`;
             }
-
-            container.innerHTML = `
-                <div class="fade-in h-full flex flex-col">
-                    <div class="mb-2 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-bold dark:text-white">Coach IA <i class="fa-solid fa-robot text-brand-primary text-lg ml-1"></i></h2>
-                            <p class="text-xs text-gray-400">El chat se guarda automáticamente.</p>
-                        </div>
-                        <button onclick="clearChat()" class="text-gray-400 hover:text-red-500 px-2 py-1"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <div id="ai-response-area" class="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-inner overflow-y-auto no-scrollbar mb-4 border border-gray-100 dark:border-gray-700 min-h-[200px]">
-                         ${chatHTML}
-                    </div>
-                     <form onsubmit="handleCustomAsk(event)" class="relative">
-                        <input type="text" id="ai-input" placeholder="Ej: Bajar 3kg en 15 días..." class="w-full p-4 pr-12 rounded-xl bg-white dark:bg-gray-800 border-none shadow-sm focus:ring-2 focus:ring-brand-primary outline-none dark:text-white">
-                        <button type="submit" class="absolute right-2 top-2 bottom-2 w-10 bg-brand-primary text-white rounded-lg flex items-center justify-center transition active:scale-90"><i class="fa-solid fa-paper-plane"></i></button>
-                    </form>
-                </div>`;
-                
-            // Scroll al fondo
-            setTimeout(() => {
-                const chatArea = document.getElementById('ai-response-area');
-                if(chatArea) chatArea.scrollTop = chatArea.scrollHeight;
-            }, 50);
+            container.innerHTML = `<div class="flex flex-col h-full pb-20"><div class="mb-2 flex justify-between items-center"><div><h2 class="text-2xl font-bold dark:text-white">Coach IA <i class="fa-solid fa-robot text-brand-primary text-lg ml-1"></i></h2></div><button onclick="clearChat()" class="text-gray-400 hover:text-red-500 px-2 py-1 transition"><i class="fa-solid fa-trash-can"></i></button></div><div id="ai-response-area" class="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-inner overflow-y-auto no-scrollbar mb-4 border border-gray-100 dark:border-gray-700 min-h-[100px]">${chatHTML}</div><form onsubmit="handleCustomAsk(event)" class="relative shrink-0"><input type="text" id="ai-input" placeholder="Ej: Bajar 3kg en 15 días..." class="w-full p-4 pr-12 rounded-xl bg-white dark:bg-gray-800 border-none shadow-sm focus:ring-2 focus:ring-brand-primary outline-none dark:text-white"><button type="submit" class="absolute right-2 top-2 bottom-2 w-10 bg-brand-primary text-white rounded-lg flex items-center justify-center transition"><i class="fa-solid fa-paper-plane"></i></button></form></div>`;
+            setTimeout(() => { const c = document.getElementById('ai-response-area'); if(c) c.scrollTop = c.scrollHeight; }, 50);
         }
 
         function renderPlan(container) {
@@ -368,88 +498,134 @@
             if (appData.activePlan) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = appData.activePlan.content;
-                
                 const listItems = tempDiv.querySelectorAll('li');
                 let checklistHTML = '';
-
                 if(listItems.length > 0) {
-                    listItems.forEach((li, index) => {
-                        const cleanText = li.textContent.replace(/•/g, '').trim();
-                        checklistHTML += `
-                        <label class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl mb-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 accent-brand-primary rounded border-gray-300">
-                            <div class="text-sm text-gray-700 dark:text-gray-200 leading-snug">${cleanText}</div>
-                        </label>`;
-                    });
-                } else {
-                    checklistHTML = `<div class="prose text-sm text-gray-700 dark:text-gray-300">${appData.activePlan.content}</div>`;
-                }
-
-                planHTML = `
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border-l-4 border-brand-primary mb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg dark:text-white">📅 Tu Plan Activo</h3>
-                        <button onclick="deletePlan()" class="text-red-400 text-xs font-bold hover:text-red-500"><i class="fa-solid fa-trash mr-1"></i> Borrar</button>
-                    </div>
-                    <div class="plan-content">
-                        ${checklistHTML}
-                    </div>
-                </div>`;
-            } else {
-                planHTML = `<div class="text-center py-10 text-gray-400 text-sm">No tienes un plan activo.<br>Pídeselo al Coach.</div>`;
-            }
-
-            container.innerHTML = `
-                <div class="fade-in">
-                    <h2 class="text-2xl font-bold dark:text-white mb-4">Mi Plan</h2>
-                    ${planHTML}
-                </div>
-            `;
+                    listItems.forEach((li) => { checklistHTML += `<label class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl mb-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition"><input type="checkbox" class="task-checkbox mt-1 w-5 h-5 accent-brand-primary rounded border-gray-300"><div class="text-sm text-gray-700 dark:text-gray-200 leading-snug">${li.textContent.replace(/•/g, '').trim()}</div></label>`; });
+                } else { checklistHTML = `<div class="prose text-sm text-gray-700 dark:text-gray-300">${appData.activePlan.content}</div>`; }
+                planHTML = `<div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border-l-4 border-brand-primary mb-6"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-lg dark:text-white">📅 Tu Plan Activo</h3><button onclick="deletePlan()" class="text-red-400 text-xs font-bold hover:text-red-500 transition"><i class="fa-solid fa-trash mr-1"></i> Borrar</button></div><div class="plan-content">${checklistHTML}</div></div>`;
+            } else { planHTML = `<div class="text-center py-10 text-gray-400 text-sm">No tienes un plan activo.<br>Pídeselo al Coach.</div>`; }
+            container.innerHTML = `<div class="pb-20"><h2 class="text-2xl font-bold dark:text-white mb-4">Mi Plan</h2>${planHTML}</div>`;
         }
 
-        // --- LÓGICA COACH ---
-        async function askAI(prompt) {
-            const chatArea = document.getElementById('ai-response-area');
-            if(!chatArea) return;
+        function showFastingOptions() {
+            const m = document.getElementById('fasting-modal');
+            const c = document.getElementById('fasting-content');
+            m.classList.remove('hidden');
+            // Timeout para permitir que la clase opacity-0 se elimine y se anime
+            setTimeout(() => {
+                m.classList.remove('opacity-0');
+                c.classList.remove('translate-y-full');
+            }, 10);
+        }
 
-            // 1. Mostrar y guardar mensaje usuario
-            const userHTML = `<div class="bg-brand-primary text-white p-3 rounded-xl rounded-tr-none self-end max-w-[90%] mb-3 text-sm ml-auto block w-fit shadow-sm">${prompt}</div>`;
-            chatArea.innerHTML += userHTML;
-            chatArea.scrollTop = chatArea.scrollHeight;
-            
-            appData.chatHistory.push({ role: 'user', text: prompt });
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if(id === 'add-modal' || id === 'fasting-modal' || id === 'profile-modal') {
+                const c = m.firstElementChild; 
+                c.classList.add('translate-y-full');
+            } else {
+                // Settings modal scaling
+                const c = m.firstElementChild;
+                c.classList.add('scale-95');
+            }
+            m.classList.add('opacity-0');
+            setTimeout(() => m.classList.add('hidden'), 300);
+        }
+
+        function showAddMenu() {
+            const m = document.getElementById('add-modal');
+            const c = document.getElementById('add-content');
+            m.classList.remove('hidden');
+            setTimeout(() => { m.classList.remove('opacity-0'); c.classList.remove('translate-y-full'); }, 10);
+        }
+
+        function setFastingProtocol(hours) {
+            appData.fasting.protocol = hours;
             save();
+            closeModal('fasting-modal');
+            router('fasting');
+        }
 
-            // 2. Loading
+        let timerInterval;
+        function toggleFasting(){ 
+            if(appData.fasting.isActive){ 
+                const duration = Date.now() - appData.fasting.startTime;
+                appData.fasting.history.unshift({ date: new Date().toISOString(), duration: duration });
+                appData.fasting.isActive = false; 
+                appData.fasting.startTime = null; 
+            } else { 
+                appData.fasting.isActive = true; 
+                appData.fasting.startTime = Date.now(); 
+            }
+            save(); 
+            if(timerInterval) clearInterval(timerInterval); 
+            router('fasting');
+        }
+        
+        function startTimerTicker(){
+            const el = document.getElementById('fast-timer');
+            const sub = document.getElementById('fast-sub');
+            const circle = document.getElementById('fast-progress-circle'); 
+            if(!el) return;
+
+            const update = () => {
+                const now = Date.now();
+                const elapsed = now - appData.fasting.startTime;
+                const totalTarget = appData.fasting.protocol * 60 * 60 * 1000;
+                const remaining = totalTarget - elapsed;
+
+                if (circle) {
+                    const pct = Math.min(1, Math.max(0, elapsed / totalTarget));
+                    const radius = 110;
+                    const circumference = 2 * Math.PI * radius;
+                    const offset = circumference - (pct * circumference);
+                    circle.style.strokeDashoffset = offset;
+                }
+
+                if (remaining > 0) {
+                    const h = Math.floor(remaining / 3600000);
+                    const m = Math.floor((remaining % 3600000) / 60000);
+                    const s = Math.floor((remaining % 60000) / 1000);
+                    el.innerText = `-${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    el.classList.remove('text-green-500');
+                    if(sub) sub.innerText = "Para poder comer";
+                } else {
+                    const extra = Math.abs(remaining);
+                    const h = Math.floor(extra / 3600000);
+                    const m = Math.floor((extra % 3600000) / 60000);
+                    el.innerText = `+${h}:${m.toString().padStart(2,'0')}`;
+                    el.classList.add('text-green-500');
+                    if(sub) sub.innerText = "¡Meta cumplida! Tiempo extra.";
+                }
+            }; 
+            update(); timerInterval=setInterval(update,1000);
+        }
+
+        async function askAI(prompt) {
+            const chatArea = document.getElementById('ai-response-area'); if(!chatArea) return;
+            chatArea.innerHTML += `<div class="bg-brand-primary text-white p-3 rounded-xl rounded-tr-none self-end max-w-[90%] mb-3 text-sm ml-auto block w-fit shadow-sm">${prompt}</div>`;
+            chatArea.scrollTop = chatArea.scrollHeight;
+            appData.chatHistory.push({ role: 'user', text: prompt }); save();
+
             const loadingId = 'loading-' + Date.now();
             chatArea.innerHTML += `<div id="${loadingId}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl w-16 mb-3"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // 3. API Call
             const result = await callGemini(prompt);
             document.getElementById(loadingId).remove();
 
-            // 4. Procesar respuesta
             const htmlText = parseMarkdown(result.text);
             const msgId = Date.now();
-            
             let responseContent = `<div class="text-sm text-gray-800 dark:text-gray-200 chat-bubble" id="response-${msgId}">${htmlText}</div>`;
             
-            if (!result.error) {
-                if (htmlText.includes('<ul>') || htmlText.includes('<ol>')) {
-                    responseContent += `
-                    <button onclick="saveCurrentPlan('response-${msgId}')" class="mt-3 w-full bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-brand-primary font-bold py-2 rounded-lg text-xs hover:bg-green-50 transition">
-                        <i class="fa-solid fa-list-check mr-1"></i> GUARDAR COMO PLAN
-                    </button>`;
-                }
+            if (!result.error && (htmlText.includes('<ul>') || htmlText.includes('<ol>'))) {
+                responseContent += `<button onclick="saveCurrentPlan('response-${msgId}')" class="mt-3 w-full bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-brand-primary font-bold py-2 rounded-lg text-xs hover:bg-green-50 transition"><i class="fa-solid fa-list-check mr-1"></i> GUARDAR COMO PLAN</button>`;
             } else if (result.error && result.isAuthError) {
                 responseContent += `<button onclick="showSettingsMenu()" class="mt-3 w-full bg-red-50 text-red-500 font-bold py-2 rounded-lg text-xs">CONFIGURAR CLAVE</button>`;
             }
 
-            // 5. Guardar en historial y mostrar
-            appData.chatHistory.push({ role: 'ai', html: responseContent });
-            save();
-
+            appData.chatHistory.push({ role: 'ai', html: responseContent }); save();
             chatArea.innerHTML += `<div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl rounded-tl-none self-start max-w-[95%] mb-3 shadow-sm">${responseContent}</div>`;
             chatArea.scrollTop = chatArea.scrollHeight;
         }
@@ -457,76 +633,48 @@
         async function callGemini(userPrompt) {
             const apiKey = getApiKey();
             if (!apiKey || apiKey.trim() === "") return { text: "⚠️ Falta la API Key. Configúrala arriba.", error: true, isAuthError: true };
-
             const { name, weight, height, age } = appData.user;
-            const systemPrompt = `
-                Eres un entrenador personal directo.
-                Usuario: ${name}, ${age} años, ${weight}kg, ${height}cm.
-                IMPORTANTE:
-                1. Si el usuario pide un PLAN o RUTINA: Genera una lista paso a paso usando guiones (-). Sé específico.
-                2. Si el usuario hace una PREGUNTA SIMPLE (ej: "¿cuánto debo pesar?", "¿qué es ayuno?"): Responde solo con la información, SIN inventar rutinas ni listas. Sé breve.
-                3. Usa formato Markdown simple.
-            `;
-
+            const systemPrompt = `Eres un entrenador personal. Usuario: ${name}, ${age} años, ${weight}kg, ${height}cm. IMPORTANTE: 1. Si pide PLAN/RUTINA: Genera lista con guiones (-). 2. Preguntas simples: Respuesta breve sin lista. 3. Markdown simple.`;
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: userPrompt }] }], systemInstruction: { parts: [{ text: systemPrompt }] } })
                 });
-                
-                if (!response.ok) {
-                    if (response.status === 403) return { text: "🚫 Tu clave API está suspendida/inválida.", error: true, isAuthError: true };
-                    return { text: "🚫 Error técnico con la IA.", error: true };
-                }
+                if (!response.ok) { if (response.status === 403) return { text: "🚫 Tu clave API está suspendida/inválida.", error: true, isAuthError: true }; return { text: "🚫 Error técnico con la IA.", error: true }; }
                 const data = await response.json();
                 return { text: data.candidates[0].content.parts[0].text, error: false };
             } catch (error) { return { text: "🚫 Error de conexión.", error: true }; }
         }
 
-        // --- Helpers ---
-        function clearChat() {
-            if(confirm('¿Borrar historial del chat?')) {
-                appData.chatHistory = [];
-                save();
-                renderCoach(document.getElementById('app-content'));
-            }
-        }
-        function saveCurrentPlan(elementId) {
-            const content = document.getElementById(elementId).innerHTML;
-            appData.activePlan = { content: content, created: new Date().toISOString() };
-            save();
-            alert("¡Plan convertido a lista de tareas!");
-            router('plan');
-        }
+        function clearChat() { if(confirm('¿Borrar historial?')) { appData.chatHistory = []; save(); renderCoach(document.getElementById('ai-response-area').parentElement); } }
+        function saveCurrentPlan(id) { appData.activePlan = { content: document.getElementById(id).innerHTML, created: new Date().toISOString() }; save(); alert("¡Plan guardado!"); router('plan'); }
         function deletePlan() { if(confirm('¿Borrar plan?')) { appData.activePlan = null; save(); router('plan'); } }
-        function parseMarkdown(text) { 
-            let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/(?:^|\n)[-*] (.*?)(?=\n|$)/g, '<li>$1</li>');
-            if (html.includes('<li>')) html = `<ul>${html}</ul>`;
-            html = html.replace(/\n/g, '<br>');
-            return html;
-        }
-        
-        // --- Shared Boilerplate ---
+        function parseMarkdown(t) { let h = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); h = h.replace(/(?:^|\n)[-*] (.*?)(?=\n|$)/g, '<li>$1</li>'); if (h.includes('<li>')) h = `<ul>${h}</ul>`; return h.replace(/\n/g, '<br>'); }
         function handleCustomAsk(e){ e.preventDefault(); const i=document.getElementById('ai-input'); if(i.value.trim()){ askAI(i.value.trim()); i.value=''; }}
-        function showProfileMenu(){document.getElementById('profile-name').value=appData.user.name;document.getElementById('profile-age').value=appData.user.age;document.getElementById('profile-weight').value=appData.user.weight;document.getElementById('profile-height').value=appData.user.height;document.getElementById('profile-target').value=appData.user.targetWeight; document.getElementById('profile-modal').classList.remove('hidden'); setTimeout(()=>document.getElementById('profile-content').classList.remove('translate-y-full'),10); showIdealWeight();}
+        function showProfileMenu(){document.getElementById('profile-name').value=appData.user.name;document.getElementById('profile-age').value=appData.user.age;document.getElementById('profile-weight').value=appData.user.weight;document.getElementById('profile-height').value=appData.user.height;document.getElementById('profile-target').value=appData.user.targetWeight; 
+            const m=document.getElementById('profile-modal'); const c=document.getElementById('profile-content');
+            m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);
+            showIdealWeight();}
         function showIdealWeight(){ const h=document.getElementById('profile-height').value/100; const min=(18.5*h*h).toFixed(1); const max=(24.9*h*h).toFixed(1); document.getElementById('ideal-weight-range').innerText = `${min} - ${max}`; }
         function saveProfile(e){e.preventDefault(); const w=parseFloat(document.getElementById('profile-weight').value); if(w!==appData.user.weight) appData.weightHistory.push({date:new Date().toISOString(),weight:w}); appData.user.weight=w; appData.user.name=document.getElementById('profile-name').value; appData.user.height=document.getElementById('profile-height').value; appData.user.age=document.getElementById('profile-age').value; save(); closeModal('profile-modal'); router('home');}
-        function closeModal(id){const m=document.getElementById(id); if(m.firstElementChild.classList.contains('translate-y-full')){}else{m.firstElementChild.classList.add('translate-y-full');} setTimeout(()=>m.classList.add('hidden'),300);}
-        function showSettingsMenu(){document.getElementById('settings-modal').classList.remove('hidden'); document.getElementById('settings-api-key').value = getApiKey();}
-        function saveSettings(){localStorage.setItem('fitmonki_apikey', document.getElementById('settings-api-key').value.trim()); document.getElementById('settings-modal').classList.add('hidden');}
-        function showAddMenu(){document.getElementById('add-modal').classList.remove('hidden'); setTimeout(()=>document.getElementById('add-content').classList.remove('translate-y-full'),10);}
+        
+        function showSettingsMenu(){
+            const m=document.getElementById('settings-modal'); const c=document.getElementById('settings-content');
+            document.getElementById('settings-api-key').value = getApiKey();
+            m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('scale-95');},10);}
+        function saveSettings(){localStorage.setItem('fitmonki_apikey', document.getElementById('settings-api-key').value.trim()); closeModal('settings-modal');}
+        function showAddMenu(){
+            const m=document.getElementById('add-modal'); const c=document.getElementById('add-content');
+            m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);}
         function selectType(t){ document.querySelectorAll('.type-btn').forEach(b=>{b.classList.remove('border-brand-primary','bg-green-50','dark:bg-green-900/20');if(b.dataset.type===t)b.classList.add('border-brand-primary','bg-green-50','dark:bg-green-900/20')}); document.getElementById('activity-type').value=t; }
         function selectIntensity(i){ document.querySelectorAll('.int-btn').forEach(b=>{b.classList.remove('bg-brand-primary','text-white');if(b.dataset.int===i)b.classList.add('bg-brand-primary','text-white')}); document.getElementById('activity-intensity').value=i; }
         function saveActivity(e){e.preventDefault(); appData.activities.unshift({id:Date.now().toString(), type:document.getElementById('activity-type').value, duration:document.getElementById('activity-duration').value, intensity:document.getElementById('activity-intensity').value, date:new Date().toISOString()}); save(); closeModal('add-modal'); router('home');}
         function toggleTheme(){ const h=document.documentElement; if(h.classList.contains('dark')){h.classList.remove('dark');localStorage.setItem('theme','light');}else{h.classList.add('dark');localStorage.setItem('theme','dark');} }
-        let timerInterval; function startTimerTicker(){const el=document.getElementById('fast-timer'); if(!el)return; const up=()=>{const now=Date.now(); const diff=now-appData.fasting.startTime; const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000); el.innerText=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;}; up(); timerInterval=setInterval(up,1000);}
-        function calculateStats(){ return {}; } // Placeholder
 
         window.onload = () => { selectIntensity('Media'); if(localStorage.getItem('theme')==='dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark'); router('home'); };
     </script>
     <style>
-        .input-field { @apply w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700 dark:text-white border-none outline-none focus:ring-2 focus:ring-brand-primary; }
+        .input-field { @apply w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700 dark:text-white border-none outline-none focus:ring-2 focus:ring-brand-primary text-base; }
     </style>
 </body>
 </html>
