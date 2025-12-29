@@ -8,12 +8,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FitMonki">
 
-    <title>FitMonki</title>
+    <title>FitMonki - Tu Compañero Fitness</title>
     
-    <!-- Favicon (Navegadores) -->
     <link rel="icon" type="image/png" href="icon.png">
-    
-    <!-- Icono Apple Touch (iOS Home Screen) -->
     <link rel="apple-touch-icon" href="icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -171,9 +168,83 @@
     </div>
 
     <!-- Modales -->
-    <div id="add-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300"><div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0" id="add-content"><div class="flex justify-between items-center mb-6"><h3 class="text-lg font-bold dark:text-white">Registrar Actividad (+50 XP)</h3><button onclick="closeModal('add-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="saveActivity(event)"><div class="grid grid-cols-2 gap-3 mb-4"><button type="button" onclick="selectType('Trotar')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Trotar"><i class="fa-solid fa-person-running text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Trotar</span></button><button type="button" onclick="selectType('Bici Estática')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Bici Estática"><i class="fa-solid fa-bicycle text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Bici</span></button><button type="button" onclick="selectType('Mancuerna')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Mancuerna"><i class="fa-solid fa-dumbbell text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Pesas</span></button><button type="button" onclick="selectType('Caminata')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Caminata"><i class="fa-solid fa-shoe-prints text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Caminata</span></button></div><input type="hidden" id="activity-type" required><div class="mb-4"><label class="text-xs font-bold uppercase text-gray-400 mb-1 block">Duración (min)</label><input type="number" id="activity-duration" class="input-field" placeholder="0" required></div><div class="mb-6 flex gap-2 bg-gray-50 dark:bg-gray-700 p-1 rounded-xl"><button type="button" onclick="selectIntensity('Suave')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Suave">Suave</button><button type="button" onclick="selectIntensity('Media')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Media">Media</button><button type="button" onclick="selectIntensity('Alta')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Alta">Alta</button></div><input type="hidden" id="activity-intensity" value="Media"><button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg transition">Guardar</button></form></div></div>
-    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300"><div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0 h-[85dvh] overflow-y-auto no-scrollbar" id="profile-content"><div class="flex justify-between items-center mb-6"><h3 class="text-lg font-bold dark:text-white">Tu Perfil</h3><button onclick="closeModal('profile-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="saveProfile(event)"><div class="space-y-4"><div><label class="text-xs text-gray-500 block mb-1">Nombre</label><input type="text" id="profile-name" class="input-field" required></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-gray-500 block mb-1">Edad</label><input type="number" id="profile-age" class="input-field" required></div><div><label class="text-xs text-gray-500 block mb-1">Altura (cm)</label><input type="number" id="profile-height" class="input-field" required></div></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-gray-500 block mb-1">Peso Actual (kg)</label><input type="number" step="0.1" id="profile-weight" class="input-field" required></div><div><label class="text-xs text-gray-500 block mb-1">Peso Meta (kg)</label><input type="number" step="0.1" id="profile-target" class="input-field" required></div></div><div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl"><p class="text-xs text-blue-600 dark:text-blue-300 leading-tight"><i class="fa-solid fa-calculator mr-1"></i> Rango ideal: <b id="ideal-weight-range">--</b> kg.</p></div><button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 transition">Actualizar Datos</button></div></form></div></div>
-    <div id="settings-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0 duration-300"><div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="settings-content"><h3 class="text-lg font-bold mb-4 dark:text-white">Configuración</h3><label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Gemini API Key</label><div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl mb-3"><p class="text-xs text-blue-800 dark:text-blue-200 mb-2">Si te da error 403, crea una clave nueva.</p><a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1">Obtener API Key Gratis <i class="fa-solid fa-external-link-alt"></i></a></div><input type="password" id="settings-api-key" class="input-field mb-4 font-mono text-xs" placeholder="Pega tu API Key aquí..."><div class="flex gap-2"><button onclick="closeModal('settings-modal')" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-sm font-medium dark:text-white transition">Cancelar</button><button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-brand-primary text-white text-sm font-bold shadow-lg transition">Guardar</button></div></div></div>
+    <div id="add-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0" id="add-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold dark:text-white">Registrar Actividad (+50 XP)</h3>
+                <button onclick="closeModal('add-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveActivity(event)">
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button type="button" onclick="selectType('Trotar')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Trotar"><i class="fa-solid fa-person-running text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Trotar</span></button>
+                    <button type="button" onclick="selectType('Bici Estática')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Bici Estática"><i class="fa-solid fa-bicycle text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Bici</span></button>
+                    <button type="button" onclick="selectType('Mancuerna')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Mancuerna"><i class="fa-solid fa-dumbbell text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Pesas</span></button>
+                    <button type="button" onclick="selectType('Caminata')" class="type-btn p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2" data-type="Caminata"><i class="fa-solid fa-shoe-prints text-brand-primary text-xl"></i><span class="text-xs dark:text-gray-300">Caminata</span></button>
+                </div>
+                <input type="hidden" id="activity-type" required>
+                <div class="mb-4">
+                    <label class="text-xs font-bold uppercase text-gray-400 mb-1 block">Duración (min)</label>
+                    <input type="number" id="activity-duration" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" placeholder="0" required>
+                </div>
+                <div class="mb-6 flex gap-2 bg-gray-50 dark:bg-gray-700 p-1 rounded-xl">
+                    <button type="button" onclick="selectIntensity('Suave')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Suave">Suave</button>
+                    <button type="button" onclick="selectIntensity('Media')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Media">Media</button>
+                    <button type="button" onclick="selectIntensity('Alta')" class="int-btn flex-1 py-2 rounded-lg text-xs font-bold transition" data-int="Alta">Alta</button>
+                </div>
+                <input type="hidden" id="activity-intensity" value="Media">
+                <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg transition">Guardar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Perfil Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0 h-[85dvh] overflow-y-auto no-scrollbar" id="profile-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold dark:text-white">Tu Perfil</h3>
+                <button onclick="closeModal('profile-modal')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveProfile(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Nombre</label>
+                        <input type="text" id="profile-name" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">Edad</label>
+                            <input type="number" id="profile-age" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">Altura (cm)</label>
+                            <input type="number" id="profile-height" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" required oninput="showIdealWeight()">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">Peso Actual (kg)</label>
+                            <input type="number" step="0.1" id="profile-weight" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">Peso Meta (kg)</label>
+                            <input type="number" step="0.1" id="profile-target" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400" required>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl">
+                        <p class="text-xs text-blue-600 dark:text-blue-300 leading-tight">
+                            <i class="fa-solid fa-calculator mr-1"></i> Rango ideal: <b id="ideal-weight-range">--</b> kg.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 transition active:scale-95">Actualizar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Configuración -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0 duration-300"><div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="settings-content"><h3 class="text-lg font-bold mb-4 dark:text-white">Configuración</h3><label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Gemini API Key</label><div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl mb-3"><p class="text-xs text-blue-800 dark:text-blue-200 mb-2">Si te da error 403, crea una clave nueva.</p><a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1">Obtener API Key Gratis <i class="fa-solid fa-external-link-alt"></i></a></div><input type="password" id="settings-api-key" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/60 text-gray-800 dark:text-white border-2 border-transparent focus:border-brand-primary focus:bg-white dark:focus:bg-gray-800 outline-none transition-all duration-300 ease-out text-base placeholder-gray-400 font-mono text-xs" placeholder="Pega tu API Key aquí..."><div class="flex gap-2"><button onclick="closeModal('settings-modal')" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-sm font-medium dark:text-white transition">Cancelar</button><button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-brand-primary text-white text-sm font-bold shadow-lg transition">Guardar</button></div></div></div>
     <div id="fasting-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300"><div class="bg-white dark:bg-gray-800 w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 pb-safe shadow-2xl transform transition-transform translate-y-full duration-300 sm:translate-y-0" id="fasting-content"><h3 class="text-lg font-bold dark:text-white mb-4">Elige tu Protocolo</h3><div class="space-y-2 max-h-[60vh] overflow-y-auto no-scrollbar"><button onclick="setFastingProtocol(12)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition"><div class="font-bold text-brand-primary">12:12 (Principiante)</div><div class="text-xs text-gray-500 dark:text-gray-400">Ventana suave para empezar.</div></button><button onclick="setFastingProtocol(14)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition"><div class="font-bold text-brand-primary">14:10 (Intermedio)</div><div class="text-xs text-gray-500 dark:text-gray-400">Un pequeño reto más.</div></button><button onclick="setFastingProtocol(16)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition"><div class="font-bold text-brand-primary">16:8 (Lean Gains)</div><div class="text-xs text-gray-500 dark:text-gray-400">El estándar de oro para perder grasa.</div></button><button onclick="setFastingProtocol(18)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition"><div class="font-bold text-brand-primary">18:6 (Guerrero)</div><div class="text-xs text-gray-500 dark:text-gray-400">Para usuarios avanzados.</div></button><button onclick="setFastingProtocol(20)" class="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-left hover:bg-green-50 dark:hover:bg-green-900/20 border border-transparent hover:border-green-200 transition"><div class="font-bold text-brand-primary">20:4 (Intenso)</div><div class="text-xs text-gray-500 dark:text-gray-400">Solo 4 horas para comer.</div></button></div><button onclick="closeModal('fasting-modal')" class="mt-4 w-full py-3 text-sm font-bold text-gray-500 transition">Cancelar</button></div></div>
 
     <script>
@@ -343,7 +414,10 @@
             container.innerHTML = `
                 <div class="pb-20">
                     <div class="flex justify-between items-end mb-4">
-                        <div><p class="text-xs text-gray-400 font-medium">HOLA, NIVEL ${appData.user.level}</p><h2 class="text-2xl font-bold text-gray-800 dark:text-white">${appData.user.name}</h2></div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">${appData.user.name}</h2>
+                            <button onclick="showProfileMenu()" class="text-gray-400 hover:text-brand-primary transition active:scale-95"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
                         <div class="text-right"><p class="text-[10px] text-gray-400 mb-1">${appData.user.xp}/${appData.user.nextLevelXp} XP</p><div class="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div class="h-full bg-brand-gold rounded-full xp-bar-fill" style="width: ${xpPercent}%"></div></div></div>
                     </div>
                     ${appData.gamification.streak > 0 ? `<div class="bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 p-3 rounded-2xl mb-6 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-orange-100 dark:bg-orange-800 rounded-full flex items-center justify-center text-xl">🔥</div><div><h4 class="font-bold text-orange-600 dark:text-orange-400 text-sm">${appData.gamification.streak} Días en Racha</h4><p class="text-[10px] text-orange-400">¡Sigue así!</p></div></div><span class="text-xs font-bold text-orange-500">+20 XP Hoy</span></div>` : ''}
@@ -496,12 +570,23 @@
         }
 
         function handleCustomAsk(e){e.preventDefault();const i=document.getElementById('ai-input');if(i.value.trim()){askAI(i.value.trim());i.value='';}}
-        function showProfileMenu(){document.getElementById('profile-name').value=appData.user.name;document.getElementById('profile-age').value=appData.user.age;document.getElementById('profile-weight').value=appData.user.weight;document.getElementById('profile-height').value=appData.user.height;document.getElementById('profile-target').value=appData.user.targetWeight;const m=document.getElementById('profile-modal'),c=document.getElementById('profile-content');m.classList.remove('hidden');setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);showIdealWeight();}
-        function showIdealWeight(){const h=document.getElementById('profile-height').value/100;const min=(18.5*h*h).toFixed(1);const max=(24.9*h*h).toFixed(1);document.getElementById('ideal-weight-range').innerText=`${min} - ${max}`;}
+        function showProfileMenu(){document.getElementById('profile-name').value=appData.user.name;document.getElementById('profile-age').value=appData.user.age;document.getElementById('profile-weight').value=appData.user.weight;document.getElementById('profile-height').value=appData.user.height;document.getElementById('profile-target').value=appData.user.targetWeight; 
+            const m=document.getElementById('profile-modal'); const c=document.getElementById('profile-content');
+            m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);
+            showIdealWeight();}
+        function showIdealWeight(){
+            const h=document.getElementById('profile-height').value/100;
+            if(!h) return;
+            const min=(18.5*h*h).toFixed(1);const max=(24.9*h*h).toFixed(1);
+            const el = document.getElementById('ideal-weight-range');
+            if(el) el.innerText=`${min} - ${max}`;
+        }
         function saveProfile(e){e.preventDefault();const w=parseFloat(document.getElementById('profile-weight').value);if(w!==appData.user.weight)appData.weightHistory.push({date:new Date().toISOString(),weight:w});appData.user.weight=w;appData.user.name=document.getElementById('profile-name').value;appData.user.height=document.getElementById('profile-height').value;appData.user.age=document.getElementById('profile-age').value;save();closeModal('profile-modal');router('home');}
         function showSettingsMenu(){const m=document.getElementById('settings-modal'),c=document.getElementById('settings-content');document.getElementById('settings-api-key').value=getApiKey();m.classList.remove('hidden');setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('scale-95');},10);}
         function saveSettings(){localStorage.setItem('fitmonki_apikey',document.getElementById('settings-api-key').value.trim());closeModal('settings-modal');}
-        function showAddMenu(){const m=document.getElementById('add-modal'),c=document.getElementById('add-content');m.classList.remove('hidden');setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);}
+        function showAddMenu(){
+            const m=document.getElementById('add-modal'); const c=document.getElementById('add-content');
+            m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('translate-y-full');},10);}
         function selectType(t){document.querySelectorAll('.type-btn').forEach(b=>{b.classList.remove('border-brand-primary','bg-green-50','dark:bg-green-900/20');if(b.dataset.type===t)b.classList.add('border-brand-primary','bg-green-50','dark:bg-green-900/20')});document.getElementById('activity-type').value=t;}
         function selectIntensity(i){document.querySelectorAll('.int-btn').forEach(b=>{b.classList.remove('bg-brand-primary','text-white');if(b.dataset.int===i)b.classList.add('bg-brand-primary','text-white')});document.getElementById('activity-intensity').value=i;}
         function toggleTheme(){const h=document.documentElement;if(h.classList.contains('dark')){h.classList.remove('dark');localStorage.setItem('theme','light');}else{h.classList.add('dark');localStorage.setItem('theme','dark');}}
@@ -514,6 +599,7 @@
             if(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');
             router('home');
             updateHeaderGamification();
+            if (appData.user.name === 'Viajero Fit') setTimeout(showProfileMenu, 800);
         };
     </script>
     <style>
